@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Món quà bí mật gửi Chúc ❤️</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+        }
+        body {
+            background: radial-gradient(circle at center, #1a091e 0%, #050208 100%);
+            color: #fff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Khung hộp thoại cho Bước 1 và Bước 2 */
+        .box {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 105, 180, 0.3);
+            padding: 35px 30px;
+            border-radius: 24px;
+            text-align: center;
+            box-shadow: 0 0 35px rgba(255, 26, 102, 0.35);
+            max-width: 380px;
+            width: 90%;
+            z-index: 10;
+            transition: all 0.5s ease;
+        }
+        .hidden {
+            display: none !important;
+        }
+        .icon-lock {
+            font-size: 48px;
+            margin-bottom: 10px;
+            display: inline-block;
+            animation: float 2.5s infinite ease-in-out;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+        h2 {
+            color: #ff85b3;
+            margin-bottom: 12px;
+            font-size: 22px;
+        }
+        p {
+            font-size: 15px;
+            margin-bottom: 20px;
+            color: #e6d5dc;
+            line-height: 1.5;
+        }
+        input {
+            width: 100%;
+            padding: 12px 15px;
+            border-radius: 12px;
+            border: 2px solid #ff4d88;
+            background: rgba(0, 0, 0, 0.4);
+            color: #fff;
+            font-size: 16px;
+            text-align: center;
+            outline: none;
+            margin-bottom: 15px;
+            transition: 0.3s;
+        }
+        input:focus {
+            box-shadow: 0 0 15px rgba(255, 77, 136, 0.6);
+        }
+        .btn-group {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 10px;
+            position: relative;
+            min-height: 50px;
+        }
+        button {
+            padding: 12px 22px;
+            border: none;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .btn-primary {
+            background: linear-gradient(45deg, #ff1a66, #ff6699);
+            color: white;
+            box-shadow: 0 4px 15px rgba(255, 26, 102, 0.4);
+        }
+        .btn-primary:hover {
+            transform: scale(1.06);
+            box-shadow: 0 6px 20px rgba(255, 26, 102, 0.7);
+        }
+        .btn-run {
+            background: rgba(255, 255, 255, 0.15);
+            color: #ddd;
+            position: relative;
+        }
+        .error {
+            color: #ff4d4d;
+            font-size: 13px;
+            margin-top: 10px;
+            display: none;
+        }
+
+        /* Hiệu ứng rung khi nhập sai mật khẩu */
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-8px); }
+            75% { transform: translateX(8px); }
+        }
+        .shake {
+            animation: shake 0.3s ease-in-out;
+        }
+
+        /* Màn hình 3: Trái tim */
+        #screen3 {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+        .heart-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 2;
+            text-align: center;
+            pointer-events: none;
+            animation: pulseText 1.2s infinite ease-in-out;
+        }
+        .heart-text h1 {
+            font-size: 26px;
+            color: #fff;
+            text-shadow: 0 0 10px #ff1a66, 0 0 25px #ff1a66;
+            margin-bottom: 5px;
+        }
+        .heart-text h2 {
+            font-size: 44px;
+            color: #ff99bb;
+            text-shadow: 0 0 15px #ff1a66, 0 0 30px #ff1a66;
+            font-family: 'Brush Script MT', cursive, sans-serif;
+        }
+        .hint-click {
+            position: absolute;
+            bottom: 25px;
+            width: 100%;
+            text-align: center;
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 13px;
+            z-index: 2;
+            pointer-events: none;
+        }
+        @keyframes pulseText {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); }
+            50% { transform: translate(-50%, -50%) scale(1.08); }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- BƯỚC 1: MỞ KHÓA MẬT KHẨU -->
+    <div id="screen1" class="box">
+        <div class="icon-lock">🔒</div>
+        <h2>Trái Tim Đang Khóa</h2>
+        <p>Nhập tên của người xinh đẹp nhất để mở khóa nhé <br><small>(Gợi ý: Tên của cậu đó)</small></p>
+        <input type="text" id="passInput" placeholder="Nhập tên vào đây..." autocomplete="off">
+        <button class="btn-primary" onclick="checkPass()" style="width: 100%;">Mở Khóa 🔑</button>
+        <div id="errorMsg" class="error">Chưa đúng rồi! Nhập tên "Chúc" cơ mà 🥺</div>
+    </div>
+
+    <!-- BƯỚC 2: CÂU HỎI & NÚT CHẠY TRỐN -->
+    <div id="screen2" class="box hidden">
+        <div class="icon-lock">💌</div>
+        <h2>Mở khóa thành công!</h2>
+        <p>Chúc có muốn xem bí mật bên trong trái tim này không?</p>
+        <div class="btn-group">
+            <button class="btn-primary" onclick="goToHeart()">Mở xem ngay ❤️</button>
+            <button id="runBtn" class="btn-run" onmouseover="moveButton()" ontouchstart="moveButton(event)">Không thèm 😜</button>
+        </div>
+    </div>
+
+    <!-- BƯỚC 3: TRÁI TIM 3D & PHÁO HOA TƯƠNG TÁC -->
+    <div id="screen3" class="hidden">
+        <div class="heart-text">
+            <h1>Chỉ yêu mình</h1>
+            <h2>Chúc ❤️</h2>
+        </div>
+        <div class="hint-click">✨ Chạm hoặc click vào màn hình để thả thêm tim nhé ✨</div>
+        <canvas id="heartCanvas"></canvas>
+    </div>
+
+    <script>
+        // Xử lý Bước 1: Kiểm tra mật khẩu
+        const passInput = document.getElementById('passInput');
+        passInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') checkPass();
+        });
+
+        function checkPass() {
+            const val = passInput.value.trim().toLowerCase();
+            const box1 = document.getElementById('screen1');
+            // Chấp nhận chữ "chúc", "chuc", hoặc có tên đệm kết thúc bằng chúc
+            if (val.includes('chúc') || val.includes('chuc')) {
+                box1.classList.add('hidden');
+                document.getElementById('screen2').classList.remove('hidden');
+            } else {
+                const err = document.getElementById('errorMsg');
+                err.style.display = 'block';
+                box1.classList.remove('shake');
+                void box1.offsetWidth; // Kích hoạt lại animation
+                box1.classList.add('shake');
+            }
+        }
+
+        // Xử lý Bước 2: Nút "Không thèm" chạy trốn khi chạm/rê chuột
+        function moveButton(e) {
+            if(e) e.preventDefault();
+            const btn = document.getElementById('runBtn');
+            const maxX = window.innerWidth - btn.offsetWidth - 40;
+            const maxY = window.innerHeight - btn.offsetHeight - 40;
+            
+            const randomX = Math.max(20, Math.floor(Math.random() * maxX));
+            const randomY = Math.max(20, Math.floor(Math.random() * maxY));
+
+            btn.style.position = 'fixed';
+            btn.style.left = randomX + 'px';
+            btn.style.top = randomY + 'px';
+        }
+
+        // Chuyển sang Bước 3
+        function goToHeart() {
+            document.getElementById('screen2').classList.add('hidden');
+            document.getElementById('screen3').classList.remove('hidden');
+            startHeartAnimation();
+        }
+
+        // Xử lý Bước 3: Vẽ Trái Tim 3D và Pháo hoa khi click
+        function startHeartAnimation() {
+            const canvas = document.getElementById('heartCanvas');
+            const ctx = canvas.getContext('2d');
+
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            window.addEventListener('resize', () => {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            });
+
+            const particles = [];
+            const sparkParticles = [];
+            const particleCount = 650;
+
+            function getHeartPoint(t) {
+                const x = 16 * Math.pow(Math.sin(t), 3);
+                const y = -(13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t));
+                return { x, y };
+            }
+
+            class HeartParticle {
+                constructor() {
+                    this.t = Math.random() * Math.PI * 2;
+                    this.size = Math.random() * 2.5 + 1;
+                    this.speed = Math.random() * 0.02 + 0.005;
+                    this.spread = (Math.random() - 0.5) * 24;
+                    this.color = `hsl(${Math.random() * 25 + 330}, 100%, ${Math.random() * 30 + 60}%)`;
+                }
+                update(beatScale) {
+                    this.t += this.speed;
+                    const pos = getHeartPoint(this.t);
+                    const scale = Math.min(canvas.width, canvas.height) / 40 * beatScale;
+                    this.x = canvas.width / 2 + pos.x * scale + (Math.random() - 0.5) * this.spread;
+                    this.y = canvas.height / 2 + pos.y * scale + (Math.random() - 0.5) * this.spread;
+                }
+                draw() {
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                    ctx.fillStyle = this.color;
+                    ctx.shadowBlur = 10;
+                    ctx.shadowColor = '#ff1a66';
+                    ctx.fill();
+                }
+            }
+
+            // Hạt pháo hoa khi click chuột / chạm màn hình
+            class Spark {
+                constructor(x, y) {
+                    this.x = x;
+                    this.y = y;
+                    const angle = Math.random() * Math.PI * 2;
+                    const speed = Math.random() * 5 + 1.5;
+                    this.vx = Math.cos(angle) * speed;
+                    this.vy = Math.sin(angle) * speed;
+                    this.alpha = 1;
+                    this.size = Math.random() * 3 + 1.5;
+                    this.color = `hsl(${Math.random() * 40 + 320}, 100%, 70%)`;
+                }
+                update() {
+                    this.x += this.vx;
+                    this.y += this.vy;
+                    this.vy += 0.05; // trọng lực nhẹ
+                    this.alpha -= 0.02;
+                }
+                draw() {
+                    ctx.save();
+                    ctx.globalAlpha = Math.max(0, this.alpha);
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                    ctx.fillStyle = this.color;
+                    ctx.fill();
+                    ctx.restore();
+                }
+            }
+
+            for (let i = 0; i < particleCount; i++) {
+                particles.push(new HeartParticle());
+            }
+
+            // Sự kiện click hoặc chạm để nổ pháo hoa tim
+            window.addEventListener('pointerdown', (e) => {
+                for (let i = 0; i < 35; i++) {
+                    sparkParticles.push(new Spark(e.clientX, e.clientY));
+                }
+            });
+
+            let time = 0;
+            function animate() {
+                ctx.fillStyle = 'rgba(10, 2, 12, 0.22)';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                time += 0.08;
+                const beatScale = 1 + Math.sin(time) * 0.06;
+
+                particles.forEach(p => {
+                    p.update(beatScale);
+                    p.draw();
+                });
+
+                for (let i = sparkParticles.length - 1; i >= 0; i--) {
+                    sparkParticles[i].update();
+                    sparkParticles[i].draw();
+                    if (sparkParticles[i].alpha <= 0) {
+                        sparkParticles.splice(i, 1);
+                    }
+                }
+
+                requestAnimationFrame(animate);
+            }
+
+            animate();
+        }
+    </script>
+</body>
+</html>
