@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Thẻ Cào & Vòng Quay Bí Mật ❤️</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+        body {
+            background: radial-gradient(circle at center, #2b0938 0%, #09020f 100%);
+            color: #fff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            touch-action: none;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 105, 180, 0.35);
+            padding: 28px 22px;
+            border-radius: 26px;
+            text-align: center;
+            box-shadow: 0 0 40px rgba(255, 26, 102, 0.4);
+            width: 92%;
+            max-width: 390px;
+            z-index: 5;
+            position: relative;
+        }
+        .hidden {
+            display: none !important;
+        }
+        h2 {
+            color: #ff85b3;
+            font-size: 23px;
+            margin-bottom: 8px;
+            text-shadow: 0 0 10px rgba(255, 26, 102, 0.5);
+        }
+        p {
+            font-size: 14.5px;
+            color: #ebd5e0;
+            margin-bottom: 18px;
+            line-height: 1.5;
+        }
+
+        /* Khu vực Thẻ Cào */
+        .scratch-wrapper {
+            position: relative;
+            width: 300px;
+            height: 170px;
+            margin: 0 auto 20px auto;
+            border-radius: 18px;
+            overflow: hidden;
+            box-shadow: 0 0 25px rgba(255, 77, 136, 0.5);
+            border: 2px solid #ff66a3;
+        }
+        .secret-content {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #ff1a66, #800040);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 15px;
+        }
+        .secret-content h3 {
+            font-size: 22px;
+            color: #fff;
+            margin-bottom: 6px;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.4);
+        }
+        .secret-content span {
+            font-size: 14px;
+            color: #ffe6f0;
+        }
+        #scratchCanvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+            transition: opacity 0.6s ease;
+        }
+
+        /* Nút bấm */
+        .btn {
+            background: linear-gradient(45deg, #ff1a66, #ff6699);
+            color: #fff;
+            border: none;
+            padding: 13px 28px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 30px;
+            cursor: pointer;
+            box-shadow: 0 5px 20px rgba(255, 26, 102, 0.5);
+            transition: all 0.25s;
+            width: 100%;
+        }
+        .btn:disabled {
+            background: rgba(255, 255, 255, 0.15);
+            color: rgba(255, 255, 255, 0.4);
+            box-shadow: none;
+            cursor: not-allowed;
+        }
+        .btn:not(:disabled):hover {
+            transform: scale(1.04);
+        }
+
+        /* Khu vực Vòng Quay May Mắn */
+        .wheel-wrapper {
+            position: relative;
+            width: 280px;
+            height: 280px;
+            margin: 10px auto 22px auto;
+        }
+        .pointer {
+            position: absolute;
+            top: -16px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 34px;
+            z-index: 10;
+            filter: drop-shadow(0 3px 6px rgba(0,0,0,0.6));
+        }
+        #wheelCanvas {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            box-shadow: 0 0 25px rgba(255, 26, 102, 0.7);
+            border: 4px solid #fff;
+            transition: transform 4.5s cubic-bezier(0.15, 0.85, 0.25, 1);
+        }
+
+        /* Popup kết quả */
+        .result-box {
+            margin-top: 15px;
+            padding: 15px;
+            background: rgba(255, 26, 102, 0.2);
+            border: 1px solid #ff66a3;
+            border-radius: 16px;
+            animation: popIn 0.5s ease;
+        }
+        @keyframes popIn {
+            0% { transform: scale(0.8); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        /* Pháo hoa nền */
+        #fwCanvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 20;
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="fwCanvas"></canvas>
+
+    <!-- TẦNG 1: THẺ CÀO BÍ MẬT -->
+    <div id="step1" class="container">
+        <h2>✨ Thẻ Cào Bí Mật ✨</h2>
+        <p>Chúc hãy dùng ngón tay (hoặc chuột) chà lên lớp nhũ bạc bên dưới để xem thông điệp ẩn nhé!</p>
+
+        <div class="scratch-wrapper">
+            <div class="secret-content">
+                <h3>💖 Chỉ Yêu Mình Chúc 💖</h3>
+                <span>Và tặng Chúc thêm 1 lượt quay quà đặc biệt!</span>
+            </div>
+            <canvas id="scratchCanvas" width="300" height="170"></canvas>
+        </div>
+
+        <button id="nextBtn" class="btn" disabled onclick="goToWheel()">Cào thêm chút nữa để mở khóa 🔒</button>
+    </div>
+
+    <!-- TẦNG 2: VÒNG QUAY TÌNH YÊU -->
+    <div id="step2" class="container hidden">
+        <h2>🎡 Vòng Quay Chiều Chúc</h2>
+        <p>Quay vào ô nào là người gửi phải thực hiện ngay lập tức không được chối!</p>
+
+        <div class="wheel-wrapper">
+            <div class="pointer">🔻</div>
+            <canvas id="wheelCanvas" width="300" height="300"></canvas>
+        </div>
+
+        <button id="spinBtn" class="btn" onclick="spinWheel()">Quay Ngay Lấy Quà 🎁</button>
+
+        <div id="resultMsg" class="result-box hidden">
+            <h3 style="color: #ff99cc; margin-bottom: 5px;">🎉 Trúng Giải Đặc Biệt! 🎉</h3>
+            <p style="margin-bottom: 0; color: #fff; font-size: 14px;">
+                Chúc đã quay trúng ô: <b>"Chiều Chúc Hết Mình ❤️"</b> (Bao gồm cả trà sữa, đi ăn và thương Chúc mỗi ngày!). Chụp màn hình lại để đòi quà nhé!
+            </p>
+        </div>
+    </div>
+
+    <script>
+        /* ================= XỬ LÝ THẺ CÀO (STEP 1) ================= */
+        const sCanvas = document.getElementById('scratchCanvas');
+        const sCtx = sCanvas.getContext('2d');
+        let isDrawing = false;
+        let isUnlocked = false;
+
+        // Vẽ lớp phủ bạc ban đầu
+        function initScratchCard() {
+            const grad = sCtx.createLinearGradient(0, 0, sCanvas.width, sCanvas.height);
+            grad.addColorStop(0, '#bdc3c7');
+            grad.addColorStop(0.5, '#ecf0f1');
+            grad.addColorStop(1, '#95a5a6');
+            sCtx.fillStyle = grad;
+            sCtx.fillRect(0, 0, sCanvas.width, sCanvas.height);
+
+            // Chữ hướng dẫn trên lớp bạc
+            sCtx.fillStyle = '#555';
+            sCtx.font = 'bold 18px Segoe UI';
+            sCtx.textAlign = 'center';
+            sCtx.fillText('✨ CÀO Ở ĐÂY NÈ CHÚC ✨', sCanvas.width / 2, sCanvas.height / 2 + 6);
+        }
+        initScratchCard();
+
+        function getScratchPos(e) {
+            const rect = sCanvas.getBoundingClientRect();
+            const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+            const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+            return {
+                x: clientX - rect.left,
+                y: clientY - rect.top
+            };
+        }
+
+        function scratch(e) {
+            if (!isDrawing || isUnlocked) return;
+            const pos = getScratchPos(e);
+            sCtx.globalCompositeOperation = 'destination-out';
+            sCtx.beginPath();
+            sCtx.arc(pos.x, pos.y, 24, 0, Math.PI * 2);
+            sCtx.fill();
+            checkScratchPercent();
+        }
+
+        function checkScratchPercent() {
+            const imgData = sCtx.getImageData(0, 0, sCanvas.width, sCanvas.height).data;
+            let transparentPixels = 0;
+            const totalPixels = imgData.length / 4;
+
+            // Kiểm tra mỗi 16 pixel để tối ưu tốc độ
+            for (let i = 3; i < imgData.length; i += 64) {
+                if (imgData[i] < 128) transparentPixels++;
+            }
+
+            const percent = (transparentPixels / (totalPixels / 16)) * 100;
+            if (percent > 42 && !isUnlocked) {
+                isUnlocked = true;
+                sCanvas.style.opacity = '0';
+                setTimeout(() => sCanvas.style.display = 'none', 600);
+                
+                const nextBtn = document.getElementById('nextBtn');
+                nextBtn.disabled = false;
+                nextBtn.innerText = 'Nhận Lượt Quay May Mắn 🎡 👉';
+                fireConfetti();
+            }
+        }
+
+        sCanvas.addEventListener('mousedown', (e) => { isDrawing = true; scratch(e); });
+        window.addEventListener('mousemove', scratch);
+        window.addEventListener('mouseup', () => isDrawing = false);
+
+        sCanvas.addEventListener('touchstart', (e) => { isDrawing = true; scratch(e); }, { passive: true });
+        sCanvas.addEventListener('touchmove', scratch, { passive: true });
+        window.addEventListener('touchend', () => isDrawing = false);
+
+        function goToWheel() {
+            document.getElementById('step1').classList.add('hidden');
+            document.getElementById('step2').classList.remove('hidden');
+            drawWheel();
+        }
+
+        /* ================= XỬ LÝ VÒNG QUAY (STEP 2) ================= */
+        const wCanvas = document.getElementById('wheelCanvas');
+        const wCtx = wCanvas.getContext('2d');
+
+        // 6 Ô quà tặng (Ô số 0 là ô đặc biệt đã được cài sẵn trúng 100%)
+        const prizes = [
+            { text: 'Chiều Hết Mình ❤️', color: '#ff1a66' },
+            { text: '1 Ly Trà Sữa 🧋', color: '#9b59b6' },
+            { text: 'Đi Ăn Nướng 🥩', color: '#e67e22' },
+            { text: 'Chúc Ngủ Ngon 🌙', color: '#3498db' },
+            { text: 'Đi Xem Phim 🍿', color: '#e84393' },
+            { text: 'Ôm 1 Cái Thật Chặt', color: '#8e44ad' }
+        ];
+
+        function drawWheel() {
+            const numSlices = prizes.length;
+            const arc = (Math.PI * 2) / numSlices;
+            const radius = wCanvas.width / 2;
+
+            wCtx.clearRect(0, 0, wCanvas.width, wCanvas.height);
+
+            for (let i = 0; i < numSlices; i++) {
+                // Vẽ từng múi màu
+                const angle = i * arc - Math.PI / 2 - arc / 2;
+                wCtx.beginPath();
+                wCtx.fillStyle = prizes[i].color;
+                wCtx.moveTo(radius, radius);
+                wCtx.arc(radius, radius, radius, angle, angle + arc);
+                wCtx.lineTo(radius, radius);
+                wCtx.fill();
+                wCtx.strokeStyle = 'rgba(255,255,255,0.3)';
+                wCtx.lineWidth = 2;
+                wCtx.stroke();
+
+                // Viết chữ lên từng múi
+                wCtx.save();
+                wCtx.translate(radius, radius);
+                wCtx.rotate(angle + arc / 2);
+                wCtx.textAlign = 'right';
+                wCtx.fillStyle = '#fff';
+                wCtx.font = 'bold 13px Segoe UI';
+                wCtx.fillText(prizes[i].text, radius - 14, 5);
+                wCtx.restore();
+            }
+
+            // Vẽ tâm vòng quay
+            wCtx.beginPath();
+            wCtx.arc(radius, radius, 22, 0, Math.PI * 2);
+            wCtx.fillStyle = '#fff';
+            wCtx.fill();
+            wCtx.fillStyle = '#ff1a66';
+            wCtx.font = '18px Arial';
+            wCtx.textAlign = 'center';
+            wCtx.textBaseline = 'middle';
+            wCtx.fillText('❤️', radius, radius + 1);
+        }
+
+        let hasSpun = false;
+        function spinWheel() {
+            if (hasSpun) return;
+            hasSpun = true;
+            const spinBtn = document.getElementById('spinBtn');
+            spinBtn.disabled = true;
+            spinBtn.innerText = 'Đang quay... ⏳';
+
+            // Cài đặt quay đúng 6 vòng (2160 độ) để kim chỉ chính xác vào Ô số 0 ("Chiều Hết Mình ❤️")
+            const targetDegree = 360 * 6; 
+            wCanvas.style.transform = `rotate(${targetDegree}deg)`;
+
+            setTimeout(() => {
+                spinBtn.classList.add('hidden');
+                document.getElementById('resultMsg').classList.remove('hidden');
+                fireConfetti();
+                setTimeout(fireConfetti, 700);
+            }, 4600);
+        }
+
+        /* ================= HIỆU ỨNG PHÁO HOA ================= */
+        const fwCanvas = document.getElementById('fwCanvas');
+        const fwCtx = fwCanvas.getContext('2d');
+        fwCanvas.width = window.innerWidth;
+        fwCanvas.height = window.innerHeight;
+
+        let confettiList = [];
+        function fireConfetti() {
+            for (let i = 0; i < 80; i++) {
+                confettiList.push({
+                    x: fwCanvas.width / 2,
+                    y: fwCanvas.height / 2,
+                    vx: (Math.random() - 0.5) * 14,
+                    vy: (Math.random() - 0.7) * 14,
+                    size: Math.random() * 6 + 3,
+                    color: `hsl(${Math.random() * 60 + 310}, 100%, 65%)`,
+                    alpha: 1
+                });
+            }
+        }
+
+        function animateConfetti() {
+            fwCtx.clearRect(0, 0, fwCanvas.width, fwCanvas.height);
+            for (let i = confettiList.length - 1; i >= 0; i--) {
+                const c = confettiList[i];
+                c.x += c.vx;
+                c.y += c.vy;
+                c.vy += 0.25;
+                c.alpha -= 0.015;
+
+                fwCtx.save();
+                fwCtx.globalAlpha = Math.max(0, c.alpha);
+                fwCtx.fillStyle = c.color;
+                fwCtx.beginPath();
+                fwCtx.arc(c.x, c.y, c.size, 0, Math.PI * 2);
+                fwCtx.fill();
+                fwCtx.restore();
+
+                if (c.alpha <= 0) confettiList.splice(i, 1);
+            }
+            requestAnimationFrame(animateConfetti);
+        }
+        animateConfetti();
+    </script>
+</body>
+</html>
